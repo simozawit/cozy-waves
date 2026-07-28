@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, Menu, X, ChevronRight, CheckCircle2, Info } from 'lucide-react';
 
 const App = () => {

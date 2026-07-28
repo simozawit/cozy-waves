@@ -9,9 +9,9 @@ const App = () => {
   const [selectedTime, setSelectedTime] = useState('');
   const [customerDetails, setCustomerDetails] = useState({ name: '', email: '', phone: '' });
   const [showNotification, setShowNotification] = useState(false);
+  const [bookingError, setBookingError] = useState(''); // Added error state
 
   // Business settings
- // const fleetCount = 5;
   const businessHours = { start: 11, end: 20 }; // 11 AM to 8 PM
   const prices = {
     '1h': 150,
@@ -24,31 +24,51 @@ const App = () => {
     const slots = [];
     for (let i = businessHours.start; i < businessHours.end; i++) {
       slots.push(`${i > 12 ? i - 12 : i}:00 ${i >= 12 ? 'PM' : 'AM'}`);
-      // Add half-hour slots if needed, keeping simple for now
     }
     return slots;
   };
 
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    if (bookingStep === 1) {
-      if (selectedDate && selectedTime) setBookingStep(2);
-    } else if (bookingStep === 2) {
-      if (customerDetails.name && customerDetails.email) {
-        setBookingStep(3);
-        // Simulate sending email
-        setTimeout(() => {
-          setShowNotification(true);
-          setTimeout(() => setShowNotification(false), 5000);
-        }, 1000);
-      }
+  const handleStep1Next = () => {
+    setBookingError('');
+    if (!selectedDate) {
+      setBookingError('Please select a date.');
+      return;
     }
+    if (!selectedTime) {
+      setBookingError('Please select a time.');
+      return;
+    }
+    setBookingStep(2);
+  };
+
+  const handleStep2Submit = () => {
+    setBookingError('');
+    if (!customerDetails.name.trim()) {
+      setBookingError('Please enter your full name.');
+      return;
+    }
+    if (!customerDetails.email.trim() || !customerDetails.email.includes('@')) {
+      setBookingError('Please enter a valid email address.');
+      return;
+    }
+    if (!customerDetails.phone.trim()) {
+      setBookingError('Please enter a valid phone number.');
+      return;
+    }
+    
+    setBookingStep(3);
+    // Simulate sending email
+    setTimeout(() => {
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 5000);
+    }, 1000);
   };
 
   const resetBooking = () => {
     setBookingStep(1);
     setSelectedDate('');
     setSelectedTime('');
+    setBookingError('');
     setCustomerDetails({ name: '', email: '', phone: '' });
   };
 
@@ -223,7 +243,7 @@ const App = () => {
         </div>
         
         <div className="flex flex-wrap justify-center gap-8">
-          {Object.entries(prices).map(([duration, price], index) => (
+          {Object.entries(prices).map(([duration, price]) => (
             <div key={duration} className="w-full md:w-64 relative flex flex-col min-w-0 break-words bg-white shadow-xl rounded-2xl border border-slate-100 hover:-translate-y-2 transition-transform duration-300">
               {duration === '2h' && (
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -323,9 +343,15 @@ const App = () => {
             {/* Booking Form Area */}
             <div className="w-full md:w-2/3 p-8 bg-slate-900">
               {bookingStep === 1 && (
-                <form onSubmit={handleBookingSubmit} className="space-y-6 animate-fadeIn">
+                <div className="space-y-6 animate-fadeIn">
                   <h4 className="text-xl font-semibold mb-4 border-b border-slate-700 pb-2">1. Select Date & Time</h4>
                   
+                  {bookingError && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
+                      {bookingError}
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">Select Duration</label>
                     <div className="grid grid-cols-4 gap-2">
@@ -346,7 +372,6 @@ const App = () => {
                      <label className="block text-sm font-medium text-slate-300 mb-2">Choose Date</label>
                      <input 
                         type="date" 
-                        required
                         min={new Date().toISOString().split('T')[0]}
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
@@ -357,7 +382,6 @@ const App = () => {
                   <div>
                      <label className="block text-sm font-medium text-slate-300 mb-2">Choose Start Time (11 AM - 8 PM)</label>
                      <select 
-                        required
                         value={selectedTime}
                         onChange={(e) => setSelectedTime(e.target.value)}
                         className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
@@ -370,28 +394,34 @@ const App = () => {
                   </div>
 
                   <button 
-                    type="submit"
+                    type="button"
+                    onClick={handleStep1Next}
                     className="w-full bg-teal-500 hover:bg-teal-400 text-white font-bold py-4 rounded-xl mt-6 transition-colors shadow-lg"
                   >
                     Continue to Details
                   </button>
-                </form>
+                </div>
               )}
 
               {bookingStep === 2 && (
-                <form onSubmit={handleBookingSubmit} className="space-y-6 animate-fadeIn">
+                <div className="space-y-6 animate-fadeIn">
                    <div className="flex items-center mb-4 border-b border-slate-700 pb-2">
-                     <button type="button" onClick={() => setBookingStep(1)} className="text-slate-400 hover:text-white mr-2">
+                     <button type="button" onClick={() => { setBookingStep(1); setBookingError(''); }} className="text-slate-400 hover:text-white mr-2">
                         &larr; Back
                      </button>
                      <h4 className="text-xl font-semibold">2. Your Details</h4>
                    </div>
+                   
+                   {bookingError && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
+                      {bookingError}
+                    </div>
+                  )}
 
                    <div>
                      <label className="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
                      <input 
                         type="text" 
-                        required
                         value={customerDetails.name}
                         onChange={(e) => setCustomerDetails({...customerDetails, name: e.target.value})}
                         className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
@@ -402,7 +432,6 @@ const App = () => {
                      <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
                      <input 
                         type="email" 
-                        required
                         value={customerDetails.email}
                         onChange={(e) => setCustomerDetails({...customerDetails, email: e.target.value})}
                         className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
@@ -414,7 +443,6 @@ const App = () => {
                      <label className="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
                      <input 
                         type="tel" 
-                        required
                         value={customerDetails.phone}
                         onChange={(e) => setCustomerDetails({...customerDetails, phone: e.target.value})}
                         className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
@@ -423,12 +451,13 @@ const App = () => {
                   </div>
 
                   <button 
-                    type="submit"
+                    type="button"
+                    onClick={handleStep2Submit}
                     className="w-full bg-teal-500 hover:bg-teal-400 text-white font-bold py-4 rounded-xl mt-6 transition-colors shadow-lg flex justify-center items-center gap-2"
                   >
                     Confirm Booking <CheckCircle2 size={20} />
                   </button>
-                </form>
+                </div>
               )}
 
               {bookingStep === 3 && (
@@ -445,6 +474,7 @@ const App = () => {
                     <p>Please use the secure link provided in your confirmation email up to 24 hours before your booking time.</p>
                   </div>
                   <button 
+                    type="button"
                     onClick={resetBooking}
                     className="border border-slate-600 hover:bg-slate-800 text-white font-medium py-2 px-6 rounded-lg transition-colors"
                   >
@@ -482,34 +512,6 @@ const App = () => {
                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                 </svg>
               </a>
-            </div>
-          </div>
-          <div className="w-full lg:w-6/12 px-4">
-            <div className="flex flex-wrap items-top mb-6">
-              <div className="w-full lg:w-4/12 px-4 ml-auto">
-                <span className="block uppercase text-slate-500 text-sm font-bold mb-2">Hours</span>
-                <ul className="list-unstyled text-slate-300">
-                  <li className="mb-2">Mon - Sun</li>
-                  <li className="font-semibold text-teal-400">11:00 AM - 8:00 PM</li>
-                  <li className="mt-4 text-sm text-slate-500">Weather Permitting</li>
-                </ul>
-              </div>
-              <div className="w-full lg:w-4/12 px-4">
-                <span className="block uppercase text-slate-500 text-sm font-bold mb-2">Quick Links</span>
-                <ul className="list-unstyled">
-                  <li><a className="text-slate-300 hover:text-white font-semibold block pb-2 text-sm" href="#fleet">Our Fleet</a></li>
-                  <li><a className="text-slate-300 hover:text-white font-semibold block pb-2 text-sm" href="#pricing">Pricing</a></li>
-                  <li><a className="text-slate-300 hover:text-white font-semibold block pb-2 text-sm" href="#book">Book Now</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-        <hr className="my-6 border-slate-800" />
-        <div className="flex flex-wrap items-center md:justify-between justify-center">
-          <div className="w-full md:w-4/12 px-4 mx-auto text-center">
-            <div className="text-sm text-slate-500 font-semibold py-1">
-              Copyright © {new Date().getFullYear()} Cozy Waves.
             </div>
           </div>
         </div>

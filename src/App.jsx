@@ -11,7 +11,7 @@ const App = () => {
   const [showNotification, setShowNotification] = useState(false);
 
   // Business settings
-  const fleetCount = 5;
+ // const fleetCount = 5;
   const businessHours = { start: 11, end: 20 }; // 11 AM to 8 PM
   const prices = {
     '1h': 150,

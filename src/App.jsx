@@ -108,6 +108,7 @@ const App = () => {
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
               <button 
+                type="button"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-gray-300 hover:text-white focus:outline-none"
               >
@@ -274,7 +275,9 @@ const App = () => {
                     <li className="flex items-center"><CheckCircle2 size={18} className="text-teal-500 mr-2" /> Brief Safety Orientation</li>
                   </ul>
                   <button 
-                    onClick={() => {
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
                       setSelectedDuration(duration);
                       document.getElementById('book').scrollIntoView({ behavior: 'smooth' });
                     }}
@@ -370,7 +373,10 @@ const App = () => {
                           <button
                             key={dur}
                             type="button"
-                            onClick={() => setSelectedDuration(dur)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedDuration(dur);
+                            }}
                             className={`py-2 rounded-lg border ${selectedDuration === dur ? 'bg-teal-500 border-teal-500 text-white font-bold' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'}`}
                           >
                             {dur}
@@ -406,7 +412,10 @@ const App = () => {
 
                     <button 
                       type="button"
-                      onClick={handleStep1Next}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleStep1Next();
+                      }}
                       className="w-full bg-teal-500 hover:bg-teal-400 text-white font-bold py-4 rounded-xl mt-6 transition-colors shadow-lg"
                     >
                       Continue to Details
@@ -417,7 +426,15 @@ const App = () => {
                 {bookingStep === 2 && (
                   <div className="space-y-6 animate-fadeIn">
                      <div className="flex items-center mb-4 border-b border-slate-700 pb-2">
-                       <button type="button" onClick={() => { setBookingStep(1); setBookingError(''); }} className="text-slate-400 hover:text-white mr-2 flex items-center">
+                       <button 
+                          type="button" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setBookingStep(1); 
+                            setBookingError(''); 
+                          }} 
+                          className="text-slate-400 hover:text-white mr-2 flex items-center"
+                        >
                           <ChevronRight size={20} className="rotate-180 mr-1" /> Back
                        </button>
                        <h4 className="text-xl font-semibold ml-2">2. Your Details</h4>
@@ -463,7 +480,10 @@ const App = () => {
 
                     <button 
                       type="button"
-                      onClick={handleStep2Submit}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleStep2Submit();
+                      }}
                       className="w-full bg-teal-500 hover:bg-teal-400 text-white font-bold py-4 rounded-xl mt-6 transition-colors shadow-lg flex justify-center items-center gap-2"
                     >
                       Confirm Booking <CheckCircle2 size={20} />
@@ -486,7 +506,10 @@ const App = () => {
                     </div>
                     <button 
                       type="button"
-                      onClick={resetBooking}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        resetBooking();
+                      }}
                       className="border border-slate-600 hover:bg-slate-800 text-white font-medium py-2 px-6 rounded-lg transition-colors"
                     >
                       Book Another

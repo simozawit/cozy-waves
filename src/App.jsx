@@ -73,9 +73,9 @@ const App = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0 flex items-center">
-            <button href="#" className="text-white font-bold text-2xl tracking-tighter hover:opacity-80 transition-opacity">
+            <a href="#home" className="text-white font-bold text-2xl tracking-tighter hover:opacity-80 transition-opacity">
               COZY<span className="text-teal-400">WAVES</span>
-            </button>
+            </a>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -111,7 +111,7 @@ const App = () => {
   );
 
   const Hero = () => (
-    <div className="relative pt-20 pb-32 flex content-center items-center justify-center min-h-screen">
+    <div id= "home" className="relative pt-20 pb-32 flex content-center items-center justify-center min-h-screen">
       <div 
         className="absolute top-0 w-full h-full bg-center bg-cover"
         style={{
@@ -322,9 +322,9 @@ const App = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap text-left lg:text-left">
           <div className="w-full lg:w-6/12 px-4">
-            <button href="#" className="text-3xl font-semibold text-white hover:opacity-80 transition-opacity inline-block">
+            <a href="#home" className="text-3xl font-semibold text-white hover:opacity-80 transition-opacity inline-block">
               COZY<span className="text-teal-500">WAVES</span>
-            </button>
+            </a>
             <h5 className="text-lg mt-2 mb-2 text-slate-400">
               Premium Jet Ski Rentals in Ottawa, ON.
             </h5>
